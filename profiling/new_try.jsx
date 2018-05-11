@@ -4,10 +4,10 @@
  */
 const sizeLLC = 3 * 1024 * 1024;     //LLC size in B
 const sizeEvictionBuffer = 4 * 1024 * 1024;
-const associativity = 8;       //associativity
+const associativity = 4;       //associativity
 const sizeLine = 64;            //in B
 const sizePage = 4 * 1024;        //in B
-const threshold = 0.00015;
+const threshold = 0.000009;
 const k = 10000;
 
 
@@ -99,7 +99,7 @@ function create_eviction_set(variableToAccess) {
                     console.log("found s: " + s + " at: " + found + " difference: " + (s - found));
                 } */
 
-        if (sizeS == 8) {
+        if (sizeS == associativity) {
             break;
         }
 
