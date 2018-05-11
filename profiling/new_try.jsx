@@ -27,7 +27,7 @@ function create_eviction_set(variableToAccess) {
 
     var startAddress = variableToAccess % sizePage;
     var sizeS = sizeEvictionBuffer / sizePage;
-
+    console.log(sizeS);
     for (var i = 0; i < k; i++) {
 
         // Invalidate the cache set
@@ -68,11 +68,11 @@ function create_eviction_set(variableToAccess) {
 
         if (t1 - t2 > threshold) {
             probeView.setUint32(before_s, s);
-            console.log("Hit " + s + " t: " + (t1 - t2));
+            console.log( i + "Hit " + s + " t: " + (t1 - t2));
             found.add(s);
         } else {
             // console.log("Miss " + s + "t: " + (t1 - t2));
-            if(found.has(s)) console.log("s: " + s + " was removed");
+            if(found.has(s)) console.log(i+ "s: " + s + " was removed" + " t: " + (t1 - t2));
             sizeS--;
         }
 /*         if ((t1 - t2 > threshold)) {
@@ -80,9 +80,10 @@ function create_eviction_set(variableToAccess) {
             console.log("found s: " + s + " at: " + found + " difference: " + (s - found));
         } */
 
-        if (sizeS == associativity) {
+        if (sizeS == 1 /* associativity */) {
             break;
         }
+        
     }
 
     currentEntry = startAddress;
