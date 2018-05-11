@@ -7,7 +7,7 @@ const sizeEvictionBuffer = 4 * 1024 * 1024;
 const associativity = 8;       //associativity
 const sizeLine = 64;            //in B
 const sizePage = 4 * 1024;        //in B
-const threshold = 0.00002;
+const threshold = 0.00015;
 const k = 10000;
 
 
