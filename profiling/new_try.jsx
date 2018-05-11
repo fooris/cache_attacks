@@ -68,7 +68,7 @@ function create_eviction_set(variableToAccess) {
 
         if (t1 - t2 > threshold) {
             probeView.setUint32(before_s, s);
-            console.log("Hit " + s + "t: " + (t1 - t2));
+            console.log("Hit " + s + " t: " + (t1 - t2));
             found.add(s);
         } else {
             // console.log("Miss " + s + "t: " + (t1 - t2));
