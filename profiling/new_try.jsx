@@ -17,6 +17,7 @@ function create_eviction_set(variableToAccess) {
     var probeView = new DataView(evictionBuffer);
     var testView = new DataView(evictionBuffer);
     var found = new Set();
+    var f = 0, m = 0;
     console.assert(sizeEvictionBuffer % sizePage == 0, "evictionbuffer is not a multiple of page");
 
     //init evictionBuffer
@@ -71,9 +72,13 @@ function create_eviction_set(variableToAccess) {
             probeView.setUint32(before_s, s);
             console.log("%c" + i + " Hit " + s + " t: " + (t1 - t2), 'color:green');
             found.add(s);
+            f++;
         } else {
             // console.log("Miss " + s + "t: " + (t1 - t2));
-            if(found.has(s)) console.log("%c" + i  + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
+            if(found.has(s)){
+                console.log("%c" + i  + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
+                m++;
+            } 
             sizeS--;
         }
 /*         if ((t1 - t2 > threshold)) {
@@ -87,9 +92,10 @@ function create_eviction_set(variableToAccess) {
         
     }
 
+    console.log("%cfound: " + f + " missed: " + m, 'color:grey');
     currentEntry = startAddress;
     do {
-        console.log(currentEntry);
+        console.log("%c" + currentEntry, 'color:black');
         currentEntry = probeView.getUint32(currentEntry);
     } while (currentEntry != startAddress)
 }
