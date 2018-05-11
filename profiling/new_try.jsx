@@ -7,7 +7,7 @@ const sizeEvictionBuffer = 4 * 1024 * 1024;
 const associativity = 8;       //associativity
 const sizeLine = 64;            //in B
 const sizePage = 4 * 1024;        //in B
-const threshold = 0.0005;
+const threshold = 0.00002;
 const k = 10000;
 
 
@@ -71,31 +71,37 @@ function create_eviction_set(variableToAccess) {
         if (t1 - t2 > threshold) {
             probeView.setUint32(before_s, s);
             console.log("%c" + i + " Hit " + s + " t: " + (t1 - t2), 'color:green');
-            found.add(s);
-            f++;
+            if (found.has(s)) {
+                console.warn(s + "was confirmed again");
+            } else {
+                found.add(s);
+                f++;
+            }
+
+
         } else {
             // console.log("Miss " + s + "t: " + (t1 - t2));
-            if(found.has(s)){
-                console.log("%c" + i  + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
+            if (found.has(s)) {
+                console.log("%c" + i + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
                 m++;
-            } 
+            }
             sizeS--;
         }
-/*         if ((t1 - t2 > threshold)) {
-            var found = debug_32contains(probeView, s);
-            console.log("found s: " + s + " at: " + found + " difference: " + (s - found));
-        } */
+        /*         if ((t1 - t2 > threshold)) {
+                    var found = debug_32contains(probeView, s);
+                    console.log("found s: " + s + " at: " + found + " difference: " + (s - found));
+                } */
 
-        if (sizeS == 1 /* associativity */) {
+        if (sizeS == associativity) {
             break;
         }
-        
+
     }
 
     console.log("%cfound: " + f + " missed: " + m, 'color:grey');
     currentEntry = startAddress;
     do {
-        console.log("%c" + currentEntry, 'color:black');
+        console.log("%c" + currentEntry + " " + found.has(currentEntry), 'color:black');
         currentEntry = probeView.getUint32(currentEntry);
     } while (currentEntry != startAddress)
 }
