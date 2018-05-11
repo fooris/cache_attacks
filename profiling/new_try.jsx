@@ -7,7 +7,7 @@ const sizeEvictionBuffer = 4 * 1024 * 1024;
 const associativity = 8;       //associativity
 const sizeLine = 64;            //in B
 const sizePage = 4 * 1024;        //in B
-const threshold = 0.0015;
+const threshold = 0.0005;
 const k = 10000;
 
 
@@ -27,7 +27,8 @@ function create_eviction_set(variableToAccess) {
 
     var startAddress = variableToAccess % sizePage;
     var sizeS = sizeEvictionBuffer / sizePage;
-    console.log(sizeS);
+
+    console.log("%cS: " + sizeS, 'color: #000000');
     for (var i = 0; i < k; i++) {
 
         // Invalidate the cache set
@@ -68,11 +69,11 @@ function create_eviction_set(variableToAccess) {
 
         if (t1 - t2 > threshold) {
             probeView.setUint32(before_s, s);
-            console.log( i + "Hit " + s + " t: " + (t1 - t2));
+            console.log("%c" + i + " Hit " + s + " t: " + (t1 - t2), 'color:green');
             found.add(s);
         } else {
             // console.log("Miss " + s + "t: " + (t1 - t2));
-            if(found.has(s)) console.log(i+ "s: " + s + " was removed" + " t: " + (t1 - t2));
+            if(found.has(s)) console.log("%c" + i  + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
             sizeS--;
         }
 /*         if ((t1 - t2 > threshold)) {
