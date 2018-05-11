@@ -16,6 +16,7 @@ function create_eviction_set(variableToAccess) {
     var evictionBuffer = new ArrayBuffer(sizeEvictionBuffer);
     var probeView = new DataView(evictionBuffer);
     var testView = new DataView(evictionBuffer);
+    var found = new Set();
     console.assert(sizeEvictionBuffer % sizePage == 0, "evictionbuffer is not a multiple of page");
 
     //init evictionBuffer
@@ -23,7 +24,7 @@ function create_eviction_set(variableToAccess) {
         probeView.setUint32(i, (i + sizePage) % sizeEvictionBuffer);
     }
 
-    
+
     var startAddress = variableToAccess % sizePage;
     var sizeS = sizeEvictionBuffer / sizePage;
 
@@ -35,7 +36,7 @@ function create_eviction_set(variableToAccess) {
             currentEntry = probeView.getUint32(currentEntry);
         } while (currentEntry != startAddress);
         // Measure access time
-        var startTime = window.performance.now();s
+        var startTime = window.performance.now(); s
         currentEntry = probeView.getUint32(variableToAccess);
         var endTime = window.performance.now();
         var t1 = endTime - startTime;
@@ -64,20 +65,25 @@ function create_eviction_set(variableToAccess) {
         endTime = window.performance.now();
         var t2 = endTime - startTime;
 
+
         if (t1 - t2 > threshold) {
             probeView.setUint32(before_s, s);
             console.log("Hit " + s + "t: " + (t1 - t2));
+            found.add(s);
         } else {
             // console.log("Miss " + s + "t: " + (t1 - t2));
+            if(found.has(s)) console.log("s: " + s + " was removed");
             sizeS--;
         }
+/*         if ((t1 - t2 > threshold)) {
+            var found = debug_32contains(probeView, s);
+            console.log("found s: " + s + " at: " + found + " difference: " + (s - found));
+        } */
 
         if (sizeS == associativity) {
             break;
         }
     }
-
-
 
     currentEntry = startAddress;
     do {
