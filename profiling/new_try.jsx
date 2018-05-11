@@ -17,7 +17,10 @@ function create_eviction_set(variableToAccess) {
     var probeView = new DataView(evictionBuffer);
     var testView = new DataView(evictionBuffer);
     var found = new Set();
+    var missed = new Set();
     var f = 0, m = 0;
+    var confirmed = new Set();
+    var trashed = new Set();
     console.assert(sizeEvictionBuffer % sizePage == 0, "evictionbuffer is not a multiple of page");
 
     //init evictionBuffer
@@ -73,6 +76,7 @@ function create_eviction_set(variableToAccess) {
             console.log("%c" + i + " Hit " + s + " t: " + (t1 - t2), 'color:green');
             if (found.has(s)) {
                 console.warn(s + "was confirmed again");
+                confirmed.add(s);
             } else {
                 found.add(s);
                 f++;
@@ -83,7 +87,10 @@ function create_eviction_set(variableToAccess) {
             // console.log("Miss " + s + "t: " + (t1 - t2));
             if (found.has(s)) {
                 console.log("%c" + i + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
+                trashed.add(s);
                 m++;
+            }else{
+                missed.add(s);
             }
             sizeS--;
         }
@@ -92,7 +99,7 @@ function create_eviction_set(variableToAccess) {
                     console.log("found s: " + s + " at: " + found + " difference: " + (s - found));
                 } */
 
-        if (sizeS == associativity) {
+        if (sizeS == 8) {
             break;
         }
 
@@ -101,7 +108,12 @@ function create_eviction_set(variableToAccess) {
     console.log("%cfound: " + f + " missed: " + m, 'color:grey');
     currentEntry = startAddress;
     do {
-        console.log("%c" + currentEntry + " " + found.has(currentEntry), 'color:black');
+        console.log("%c" + currentEntry 
+        + "\n\tfound: " + found.has(currentEntry) 
+        + "\n\tconfirmed: " + confirmed.has(currentEntry) 
+        + "\n\ttrashed: " + trashed.has(currentEntry)
+        + "\n\tmissed: " + missed.has(currentEntry)
+        , 'color:black');
         currentEntry = probeView.getUint32(currentEntry);
     } while (currentEntry != startAddress)
 }
