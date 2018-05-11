@@ -13,12 +13,14 @@ const k = 10000;
 
 
 function create_eviction_set(variableToAccess) {
+    if(variableToAccess == undefined) {
+        variableToAccess = 0;
+    }
     var evictionBuffer = new ArrayBuffer(sizeEvictionBuffer);
     var probeView = new DataView(evictionBuffer);
     var testView = new DataView(evictionBuffer);
     var found = new Set();
     var missed = new Set();
-    var f = 0, m = 0;
     var confirmed = new Set();
     var trashed = new Set();
     console.assert(sizeEvictionBuffer % sizePage == 0, "evictionbuffer is not a multiple of page");
@@ -75,20 +77,18 @@ function create_eviction_set(variableToAccess) {
             probeView.setUint32(before_s, s);
             console.log("%c" + i + " Hit " + s + " t: " + (t1 - t2), 'color:green');
             if (found.has(s)) {
-                console.warn(s + "was confirmed again");
+                console.warn(s + " was confirmed");
                 confirmed.add(s);
             } else {
                 found.add(s);
-                f++;
             }
 
 
         } else {
             // console.log("Miss " + s + "t: " + (t1 - t2));
             if (found.has(s)) {
-                console.log("%c" + i + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
+                console.log("%c" + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
                 trashed.add(s);
-                m++;
             }else{
                 missed.add(s);
             }
@@ -105,17 +105,37 @@ function create_eviction_set(variableToAccess) {
 
     }
 
-    console.log("%cfound: " + f + " missed: " + m, 'color:grey');
+    console.log('--------------------------------------- Resulting Eviction Set ---------------------------------------');
+
     currentEntry = startAddress;
     do {
+        var f = found.has(currentEntry);
+        var c = confirmed.has(currentEntry);
+        var t = trashed.has(currentEntry);
+        var m =  missed.has(currentEntry);
+
+        var css = "";
+        if(f){
+            css = "color:lightgreen";
+        }else{
+            css = "color:orange";
+        }
+        if(c){
+            css = "color:green";
+        }
+        if(t || m){
+            css = "color:red";
+        }
+
         console.log("%c" + currentEntry 
-        + "\n\tfound: " + found.has(currentEntry) 
-        + "\n\tconfirmed: " + confirmed.has(currentEntry) 
-        + "\n\ttrashed: " + trashed.has(currentEntry)
-        + "\n\tmissed: " + missed.has(currentEntry)
-        , 'color:black');
+        + "\n\tfound:    \t" + f
+        + "\n\tconfirmed:\t" + c 
+        + "\n\ttrashed:  \t" + t
+        + "\n\tmissed:   \t" + m
+        , css);
         currentEntry = probeView.getUint32(currentEntry);
     } while (currentEntry != startAddress)
+
+    return true;
 }
 
-create_eviction_set(0);

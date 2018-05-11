@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <title>Spy in the Sandbox</title>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <h1>Prepare to be Pwned</h1>
+    <p>lets pray that it works</p>
+    <hr>
+
+    <p id="load_info">no file loaded</p>
+    <button onclick="load('cache_attack.jsx')" id="loada">load old</button>
+    <button onclick="load('new_try.jsx')" id="loadb">load new</button>
+    <button onclick="start()" id="start" style="display: none">start</button>
+    <p id="info"></p>
+    <script src="debug_methods.jsx"></script>
+    <script>
+        function load(file) {
+            var scriptTag = document.createElement('script');
+            scriptTag.setAttribute('src', file);
+            document.head.appendChild(scriptTag);
+            document.getElementById("loada").style.display = "none";
+            document.getElementById("loadb").style.display = "none";
+            document.getElementById("load_info").innerHTML = "loaded: " + file;
+            document.getElementById("start").style.display = "block";
+        }
+        function start() {
+            document.getElementById("info").innerHTML = "pwning...";
+            if (create_eviction_set()) {
+                document.getElementById("info").innerHTML = "you were pwnd, check console for eviction set";
+            }else{
+                document.getElementById("info").innerHTML = "someting went terribly wrong  ... run!  ... RUN FOR YOUR MISERABLE LIFES!!!";
+            }
+        }
+    </script>
+</body>
+
+</html>

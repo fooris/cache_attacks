@@ -127,5 +127,3 @@ function shuffle(array) {
 }
 
 
-/*------------ run ------------*/
-create_eviction_set();
