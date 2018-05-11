@@ -1,0 +1,27 @@
+<html>
+
+<head>
+    <title>Spy in the Sandbox</title>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <h1>Prepare to be Pwned</h1>
+    <p>lets pray that it works</p>
+    <hr>
+
+    <p id="info"></p>
+    <button onclick="start('cache_attack.jsx')">start old</button>
+    <button onclick="start('new_try.jsx')">start new</button>
+    <script>
+        function start(file) {
+            var scriptTag = document.createElement('script');
+            scriptTag.setAttribute('src', file);
+            document.head.appendChild(scriptTag);
+            document.getElementById("info").innerHTML = "pwning...";
+            document.getElementById("info").innerHTML = "you were pwnd, check console for eviction set";
+        }
+    </script>
+</body>
+
+</html>
