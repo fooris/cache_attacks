@@ -7,13 +7,15 @@ const sizeEvictionBuffer = 4 * 1024 * 1024;
 const associativity = 8;       //associativity
 const sizeLine = 64;            //in B
 const sizePage = 4 * 1024;        //in B
-const threshold = 0.000009;
+const threshold = 0.000002;
 const k = 10000;
+
+const debug = false;
 
 
 
 function create_eviction_set(variableToAccess) {
-    if(variableToAccess == undefined) {
+    if (variableToAccess == undefined) {
         variableToAccess = 0;
     }
     var evictionBuffer = new ArrayBuffer(sizeEvictionBuffer);
@@ -75,9 +77,9 @@ function create_eviction_set(variableToAccess) {
 
         if (t1 - t2 > threshold) {
             probeView.setUint32(before_s, s);
-            console.log("%c" + i + " Hit " + s + " t: " + (t1 - t2), 'color:green');
+            if (debug) console.log("%c" + i + " Hit " + s + " t: " + (t1 - t2), 'color:green');
             if (found.has(s)) {
-                console.warn(s + " was confirmed");
+                if (debug) console.warn(s + " was confirmed");
                 confirmed.add(s);
             } else {
                 found.add(s);
@@ -87,9 +89,9 @@ function create_eviction_set(variableToAccess) {
         } else {
             // console.log("Miss " + s + "t: " + (t1 - t2));
             if (found.has(s)) {
-                console.log("%c" + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
+                if (debug) console.log("%c" + " s: " + s + " was removed" + " t: " + (t1 - t2), 'color:red');
                 trashed.add(s);
-            }else{
+            } else {
                 missed.add(s);
             }
             sizeS--;
@@ -99,9 +101,8 @@ function create_eviction_set(variableToAccess) {
                     console.log("found s: " + s + " at: " + found + " difference: " + (s - found));
                 } */
 
-        if (sizeS == associativity) {
-            break;
-        }
+
+        if(sizeS == associativity) break;
 
     }
 
@@ -112,27 +113,27 @@ function create_eviction_set(variableToAccess) {
         var f = found.has(currentEntry);
         var c = confirmed.has(currentEntry);
         var t = trashed.has(currentEntry);
-        var m =  missed.has(currentEntry);
+        var m = missed.has(currentEntry);
 
         var css = "";
-        if(f){
+        if (f) {
             css = "color:lightgreen";
-        }else{
+        } else {
             css = "color:orange";
         }
-        if(c){
+        if (c) {
             css = "color:green";
         }
-        if(t || m){
+        if (t || m) {
             css = "color:red";
         }
 
-        console.log("%c" + currentEntry 
-        + "\n\tfound:    \t" + f
-        + "\n\tconfirmed:\t" + c 
-        + "\n\ttrashed:  \t" + t
-        + "\n\tmissed:   \t" + m
-        , css);
+        console.log("%c" + currentEntry
+            + "\n\tfound:    \t" + f
+            + "\n\tconfirmed:\t" + c
+            + "\n\ttrashed:  \t" + t
+            + "\n\tmissed:   \t" + m
+            , css);
         currentEntry = probeView.getUint32(currentEntry);
     } while (currentEntry != startAddress)
 
