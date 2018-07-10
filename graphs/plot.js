@@ -44,27 +44,40 @@ function drawChart(datapoints) {
     data.addRows(d);
 
     var options = {
+	fontSize: 20,
+	titleTextStyle: {
+		fontSize: 25
+	},
         chart: {
           title: 'time to acces cached vs evicted memory',
           subtitle: 'in µs'
         },
-        width: 2000,
-        height: 800,
+        width: 1000,
+        height: 400,
 
         series: {
             1: {
-              targetAxisIndex:0
+              targetAxisIndex:0,
             }
           },
         vAxes: {
-            0: {
+           0: {
                 title: 'time in µs',
+		titleTextStyle: {
+			fontSize: 20
+		},
                 viewWindow: {
-                    max: 4
+                    max: 3
               }
             }
-          }
-        
+          },
+	hAxes: {
+	   0: {
+	        titleTextStyle: {
+		    fontSize: 20
+		}
+	   }
+     	}
             
       };
 
